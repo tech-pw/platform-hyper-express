@@ -1,0 +1,13 @@
+#hidden files
+.*
+#configs
+*.json
+jest.config.js
+*/**/__tests__
+demo
+coverage
+src
+bun.lockb
+tests
+docs
+CHANGELOG.md
