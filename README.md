@@ -8,6 +8,7 @@
 
 Combined with the power of [**`uWebsockets.js`**](https://github.com/uNetworking/uWebSockets.js) - a Node.js binding of uSockets written in C++, **`platform-hyper-express`** allows NestJS Developers to unlock higher throughput for their web applications with their existing hardware.
 
+Original work inspired by [m8a-io](https://github.com/m8a-io/hyper-express-adapter)
 
 
 ## Installation
@@ -66,7 +67,6 @@ To run platform-hyper-express functionality tests locally on your machine, you m
 3. Run **`npm install`** in the root directory.
 4. Run **`npm install`** in the **`/tests`** directory.
 5. Run **`npm test`** to run all tests with your local changes.
-
 
 
 ## License
