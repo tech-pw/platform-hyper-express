@@ -1,6 +1,7 @@
 {
   "name": "@pw-tech/platform-hyper-express",
-  "version": "0.0.2",
+  "version": "0.1.2",
+  "tag": "latest",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -20,7 +21,7 @@
     "body-parser": "1.20.2",
     "content-type": "1.0.5",
     "cors": "2.8.5",
-    "hyper-express": "^6.16.3",
+    "hyper-express": "^6.17.2",
     "live-directory": "3.0.3"
   },
   "devDependencies": {
