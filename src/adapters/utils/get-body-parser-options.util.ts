@@ -52,6 +52,14 @@ export async function multipartRequestBodyParser(
 
   const fields: Record<string, MultipartFieldInterface> = {};
   await req.multipart(async (field) => {
+    const coommonMultipartField: MultipartFieldInterface = {
+      type: field.file ? 'file' : 'field',
+      fieldname: field.name,
+      encoding: field.encoding,
+      mimetype: field.mime_type,
+      fields: fields,
+    };
+
     if (field.file) {
       const chunks: Buffer[] = [];
       const fileStream = field.file.stream;
@@ -64,26 +72,18 @@ export async function multipartRequestBodyParser(
       const buffer = Buffer.concat(chunks);
 
       fields[field.name] = {
-        type: 'file',
-        fieldname: field.name,
+        ...coommonMultipartField,
         filename: field.file.name,
-        encoding: field.encoding,
-        mimetype: field.mime_type,
         file: field.file.stream,
-        fields: fields,
         _buf: buffer,
         toBuffer: addToBufferMethod(field.file.stream).toBuffer
       };
     } else {
       fields[field.name] = {
-        type: 'field',
-        fieldname: field.name,
-        mimetype: field.mime_type,
-        encoding: field.encoding,
+        ...coommonMultipartField,
         value: field.value || '',
         fieldnameTruncated: (field.truncated as Truncations).name ?? false,
         valueTruncated: (field.truncated as Truncations).value ?? false,
-        fields: fields
       };
     }
   });
