@@ -22,6 +22,7 @@ import {
 } from "@nestjs/common/utils/shared.utils";
 import { AbstractHttpAdapter } from "@nestjs/core/adapters/http-adapter";
 import { RouterMethodFactory } from "@nestjs/core/helpers/router-method-factory";
+import { multipartRequestBodyParser } from "./utils/get-body-parser-options.util";
 import { parse } from "content-type";
 import {
   Request,
@@ -225,6 +226,10 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
       const contentType = req.header("Content-Type");
       if (!contentType) return;
       const type = parse(contentType);
+      if (type.type === 'multipart/form-data') {
+        req.body = await multipartRequestBodyParser(req);      
+        return;
+      }
       if (type.type === "application/json") {
         req.body = await req.json({});
         return;
