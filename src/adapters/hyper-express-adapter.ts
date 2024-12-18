@@ -226,7 +226,7 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
       const contentType = req.header("Content-Type");
       if (!contentType) return;
       const type = parse(contentType);
-      if (type.type === 'multipart/form-data') {
+      if (type.type === "multipart/form-data") {
         req.body = await multipartRequestBodyParser(req);      
         return;
       }
