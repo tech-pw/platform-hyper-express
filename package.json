@@ -1,6 +1,6 @@
 {
   "name": "@pw-tech/platform-hyper-express",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "tag": "latest",
   "description": "",
   "main": "dist/index.js",
