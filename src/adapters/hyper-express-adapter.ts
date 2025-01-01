@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/ban-types */
+import fs from 'fs';
+import path from 'path';
 import {
   InternalServerErrorException,
   Logger,
@@ -28,6 +30,7 @@ import {
   Request,
   Response,
   Server,
+  MiddlewareNext,
   ServerConstructorOptions,
 } from "hyper-express";
 import cors, { CorsRequest } from "cors";
@@ -175,14 +178,29 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
   }
 
   public useStaticAssets(
-    path: string,
-    // options: Options & { prefix?: string },
+    assetsPath: string,
+    options: { prefix?: string },
   ) {
-    // const LiveDirectory = loadPackage(
-    //     'LiveDirectory',
-    //     'HyperExpressAdapter',
-    //     () => require('live-directory'),
-    // );
+    const { prefix = '/' } = options;
+    this.use(async (req: Request, res: Response, next: MiddlewareNext) => {
+      try {
+        if (req.path.startsWith(prefix)) {
+          const relativePath = req.path.replace(prefix, '');
+          const filePath = path.join(assetsPath, relativePath);
+
+          // Check if the file exists
+          if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
+            return res.send(fs.readFileSync(filePath));
+          }
+        }
+        // Continue to the next middleware for non-static paths or file not exits
+        next();
+      } catch (err) {
+        console.error('Error in useStaticAssets::middleware:', err);
+        next();
+      }
+    });
+    console.log(`Static assets are being served from ${assetsPath} with prefix: ${prefix}`);
   }
 
   public setBaseViewsDir(path: string | string[]) {
