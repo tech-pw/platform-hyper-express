@@ -1,4 +1,4 @@
-## 0.3.1
+## 0.3.1-beta.1
 
 * Fix multipart field toBuffer function (use buffer data instead of unreadable stream)
 
