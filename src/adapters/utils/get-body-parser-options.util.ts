@@ -31,18 +31,22 @@ export function getBodyParserOptions<Options = NestHyperExpressBodyParserOptions
   return parserOptions;
 }
 
-function addToBufferMethod(stream: Readable): ReadableWithToBuffer {
-  const readableWithToBuffer = stream as ReadableWithToBuffer;
+/**
+ * Adds a `toBuffer` method to a `Readable` stream, enabling the buffer to be returned as a Promise.
+ *
+ * @param {Buffer} buffer - The buffer to be wrapped in a readable stream.
+ * @returns {ReadableWithToBuffer} - A Readable stream with an additional `toBuffer` method.
+ */
+function addToBufferMethod(buffer: Buffer): ReadableWithToBuffer {
+  // Create a Readable stream from the provided buffer
+  const readableWithToBuffer = Readable.from(buffer) as ReadableWithToBuffer;
 
-  // Use an arrow function to ensure 'this' is the stream
-  readableWithToBuffer.toBuffer = async (): Promise<Buffer> => {
-    const chunks: Buffer[] = [];
-    for await (const chunk of readableWithToBuffer) {
-      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-    }
-    return Buffer.concat(chunks);
-  };
+  async function toBuffer(): Promise<Buffer> {
+    return new Promise((resolve, reject) => resolve(buffer));
+  }
 
+  // Assign the `toBuffer` function to the Readable stream
+  readableWithToBuffer.toBuffer = toBuffer;
   return readableWithToBuffer;
 }
 
@@ -76,7 +80,7 @@ export async function multipartRequestBodyParser(
         filename: field.file.name,
         file: field.file.stream,
         _buf: buffer,
-        toBuffer: addToBufferMethod(field.file.stream).toBuffer
+        toBuffer: addToBufferMethod(buffer).toBuffer
       };
     } else {
       fields[field.name] = {

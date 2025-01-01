@@ -1,3 +1,7 @@
+## 0.3.1-beta.1
+
+* Fix multipart field toBuffer function (use buffer data instead of unreadable stream)
+
 ## 0.3.0
 
 * Updated hyper-express to 6.17.3 which brings node 23 support
