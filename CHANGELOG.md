@@ -1,3 +1,7 @@
+## 0.3.1-beta.2
+
+* Handling of useStaticAssets function to serve static files (e.g., images, CSS, JavaScript, or other assets) from a specified directory
+
 ## 0.3.1-beta.1
 
 * Fix multipart field toBuffer function (use buffer data instead of unreadable stream)
