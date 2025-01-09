@@ -1,4 +1,3 @@
-import { promises } from 'fs';
 import { Readable } from "stream";
 import type { RawBodyRequest } from "@nestjs/common";
 import type { IncomingMessage, ServerResponse } from "http";
@@ -94,13 +93,4 @@ export async function multipartRequestBodyParser(
   });
 
   return fields;
-}
-
-export async function fileExists(filePath: string): Promise<boolean> {
-  try {
-    await promises.access(filePath); // Check if the file is accessible
-    return true; // File exists
-  } catch {
-    return false; // File does not exist
-  }
 }

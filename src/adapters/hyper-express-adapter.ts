@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/ban-types */
 import path from 'path';
-import { promises } from 'fs';
 import {
   InternalServerErrorException,
   Logger,
@@ -24,7 +23,7 @@ import {
 } from "@nestjs/common/utils/shared.utils";
 import { AbstractHttpAdapter } from "@nestjs/core/adapters/http-adapter";
 import { RouterMethodFactory } from "@nestjs/core/helpers/router-method-factory";
-import { fileExists, multipartRequestBodyParser } from "./utils/get-body-parser-options.util";
+import { multipartRequestBodyParser } from "./utils/get-body-parser-options.util";
 import { parse } from "content-type";
 import {
   Request,
@@ -187,12 +186,15 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
         if (req.path.startsWith(prefix)) {
           const relativePath = req.path.replace(prefix, '');
           const filePath = path.join(assetsPath, relativePath);
-
-          // Check if the file exists
-          if (await fileExists(filePath) && (await promises.stat(filePath)).isFile()) {
-            const file = await promises.readFile(filePath);
-            return res.send(file);
-          }
+          return await new Promise((resolve, reject) => {
+            try {
+              res.file(filePath, () => {
+                resolve(next())
+              });
+            } catch (error) {
+              reject(error);
+            }
+          })
         }
         // Continue to the next middleware for non-static paths or file not exits
         next();
