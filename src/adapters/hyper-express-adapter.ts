@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/ban-types */
 import path from 'path';
+import { promises } from 'fs';
 import {
   InternalServerErrorException,
   Logger,
@@ -186,15 +187,19 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
         if (req.path.startsWith(prefix)) {
           const relativePath = req.path.replace(prefix, '');
           const filePath = path.join(assetsPath, relativePath);
-          return await new Promise((resolve, reject) => {
-            try {
-              res.file(filePath, () => {
-                resolve(next())
-              });
-            } catch (error) {
-              reject(error);
-            }
-          })
+
+          // Check is valid file path
+          if ((await promises.stat(filePath)).isFile()) {
+            return await new Promise((resolve, reject) => {
+              try {
+                res.file(filePath, () => {
+                  resolve(next())
+                });
+              } catch (error) {
+                reject(error);
+              }
+            })
+          }
         }
         // Continue to the next middleware for non-static paths or file not exits
         next();
