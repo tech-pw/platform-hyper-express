@@ -182,7 +182,7 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
     options: { prefix?: string },
   ) {
     const { prefix = '/' } = options;
-    this.use(async (req: Request, res: Response, next: MiddlewareNext) => {
+    this.use(prefix, async (req: Request, res: Response, next: MiddlewareNext) => {
       try {
         if (req.path.startsWith(prefix)) {
           const relativePath = req.path.replace(prefix, '');
