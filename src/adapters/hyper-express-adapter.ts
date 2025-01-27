@@ -208,7 +208,6 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
         next();
       }
     });
-    console.log(`Static assets are being served from ${assetsPath} with prefix: ${prefix}`);
   }
 
   public setBaseViewsDir(path: string | string[]) {

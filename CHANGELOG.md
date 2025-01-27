@@ -1,14 +1,8 @@
-## 0.3.1-beta.4
+## 0.4.0
 
-* Apply useStaticAssets only for given pattern route 
-
-## 0.3.1-beta.3
-
-* Handling of useStaticAssets function to serve static files (e.g., images, CSS, JavaScript, or other assets) from a specified directory
-
-## 0.3.1-beta.1
-
-* Fix multipart field toBuffer function (use buffer data instead of unreadable stream)
+* 
+1. Handling of useStaticAssets function to serve static files (e.g., images, CSS, JavaScript, or other assets) from a specified directory.
+2. Fix multipart field toBuffer function
 
 ## 0.3.0
 
