@@ -1,7 +1,7 @@
 {
   "name": "@pw-tech/platform-hyper-express",
-  "version": "0.4.0",
-  "tag": "latest",
+  "version": "0.4.1-beta.1",
+  "tag": "beta",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
