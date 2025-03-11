@@ -5,8 +5,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -b .",
-    "compile": "tsc --build ./tsconfig.build.json",
+    "build": "tsc --build ./tsconfig.build.json",
+    "compile": "tsc -b .",
     "start:local": "node --watch-path=./src dist/test.js & tsc -w",
     "start:dev": "npm run build && node dist/index.js",
     "distribute": "npm run build",
