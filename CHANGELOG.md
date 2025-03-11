@@ -1,3 +1,7 @@
+## 0.4.1-beta.1
+
+* Fix createMiddlewareFactory function implementation
+
 ## 0.4.0
 
 * 

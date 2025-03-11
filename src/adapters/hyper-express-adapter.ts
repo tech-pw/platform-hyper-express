@@ -57,7 +57,7 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
 
     this.httpServer = this.instance = new Server(this.opts);
   }
-
+ 
   port?: number;
   once() {}
   removeListener() {}
@@ -239,9 +239,16 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
   public createMiddlewareFactory(
     requestMethod: RequestMethod,
   ): (path: string, callback: Function) => any {
-    return this.routerMethodFactory
-      .get(this.instance, requestMethod)
-      .bind(this.instance);
+    return (path: string, callback: Function) => {
+      this.instance.use(path, async (req: Request, res: Response, next: MiddlewareNext) => {
+        //@ts-ignore
+        if (requestMethod === RequestMethod.ALL || requestMethod === RequestMethod[req.method]) {
+          await callback(req, res, next);
+        } else {
+          next(); // Skip middleware if method doesn't match
+        }
+      });
+    };
   }
 
   public initHttpServer(_options: NestApplicationOptions) {}
