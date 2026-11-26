@@ -1,73 +1,69 @@
 # Hyper-Express Adapter for NestJS
 
+**`@pw-tech/platform-hyper-express`** is a [NestJS HTTP adapter](https://docs.nestjs.com/faq/http-adapter) built on [hyper-express](https://github.com/kartikk221/hyper-express), which runs on [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) (C++). It gives NestJS apps higher throughput on the same hardware.
 
-## Motivation
-**`platform-hyper-express`** is [**`NestJS HTTP Adapter`**](https://docs.nestjs.com/faq/http-adapter) that implement hyper-express into NestJS.
+Inspired by [m8a-io/hyper-express-adapter](https://github.com/m8a-io/hyper-express-adapter).
 
-[**`hyper-express`**](https://github.com/kartikk221/hyper-express) aims to be a simple yet performant HTTP & Websocket Server.
+## Requirements
 
-Combined with the power of [**`uWebsockets.js`**](https://github.com/uNetworking/uWebSockets.js) - a Node.js binding of uSockets written in C++, **`platform-hyper-express`** allows NestJS Developers to unlock higher throughput for their web applications with their existing hardware.
+| Package | Version |
+| --- | --- |
+| Node.js | `>=26` |
+| `@nestjs/common`, `@nestjs/core` | `^12.0.0` |
+| `hyper-express` | `^7.0.2` (bundled) |
 
-Original work inspired by [m8a-io](https://github.com/m8a-io/hyper-express-adapter)
-
+Use a glibc-based image (Debian/Ubuntu). Alpine/musl is not supported. Upgrading from `0.4.x`? See [UPGRADE-1.0.0.md](./UPGRADE-1.0.0.md).
 
 ## Installation
+
 ```sh
 npm i @pw-tech/platform-hyper-express
 ```
 
-
+`@nestjs/platform-express` is **not** required.
 
 ## Usage
-Use **HyperExpressAdapter** for NestJS HTTP Adapter. Must require **`@nestjs/platform-express`** in dependencies.
-```js
+
+```ts
 import { NestFactory } from '@nestjs/core';
 import { HyperExpressAdapter, NestHyperExpressApplication } from '@pw-tech/platform-hyper-express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestHyperExpressApplication>(AppModule, new HyperExpressAdapter({ max_body_length: 5 * 1024 * 1024 }), { bufferLogs: true });
+  const app = await NestFactory.create<NestHyperExpressApplication>(
+    AppModule,
+    new HyperExpressAdapter({ max_body_length: 5 * 1024 * 1024 }),
+  );
   await app.listen(3000);
 }
 bootstrap();
 ```
 
+Supported: controllers, guards, pipes, interceptors, exception filters, global middleware (`app.use`), CORS, URI versioning, static assets (`app.useStaticAssets`), JSON/form/text/multipart bodies, `StreamableFile` and SSE.
 
+## Known limitations
 
-## Examples
-TBA
+- Express middlewares are not 100% compatible; some may need a polyfill.
+- Route-scoped middleware (`consumer.apply(Mw).forRoutes(...)`) fails with "duplicate routes". Use `app.use(...)` instead.
+- Several API versions on the same path (header/media-type/custom versioning) fail the same way. Use `VersioningType.URI` instead.
+- The uWebSockets.js version header is hidden by default. Set `KEEP_UWS_HEADER=1` to keep it.
 
-## Supported Versions
+## APM
 
-- Node `>=16`
-Node 22 is also supported.
+Works with dd-trace and OpenTelemetry via [opentelemetry-instrumentation-hyper-express](https://github.com/tech-pw/opentelemetry-instrumentation-hyper-express).
 
-## APM Support
+## Development
 
-**@pw-tech/platform-hyper-express** is fully compatabile with dd-trace and opentelememetry APM using our [opentelemetry-instrumentaion-hyper-express](https://github.com/tech-pw/opentelemetry-instrumentation-hyper-express) package.
-Checkout the above package for more info on usage.
+```sh
+nvm use                      # Node 26
+npm install
+npm run compile              # build dist/
+npm run lint
+npm run test:integrations    # e2e tests
+```
 
-
-## Encountering Problems?
-- **`@pw-tech/platform-hyper-express`** is mostly compatible with **`@pw-tech/platform-hyper-express`** but not **100%** therefore you may encounter some middlewares not working out of the box. In this scenario, you must either write your own polyfill or omit the middleware to continue.
-- Currently uWebsockets.js supports only Node.js LTS versions 16, 18, 20 and 22 on (glibc) Linux, macOS and Windows, on [**`Tier 1`**](https://github.com/nodejs/node/blob/master/BUILDING.md#platform-list) platforms.
-- The uWebsockets.js version header is disabled by default. You may opt-out of this behavior by setting an environment variable called **`KEEP_UWS_HEADER`** to a truthy value such as **`1`** or **`true`**.
-
-
-
-## Still Having Problems?
-- Open an [**`Issue`**](https://github.com/tech-pw/opentelemetry-instrumentation-hyper-express/issues) with details about what led up to the problem including error traces, route information, etc.
-
-
-
-## Testing Changes
-To run platform-hyper-express functionality tests locally on your machine, you must follow the steps below.
-1. Clone the [**`platform-hyper-express`**](https://github.com/tech-pw/opentelemetry-instrumentation-hyper-express/issues) repository to your machine.
-2. Initialize and pull any submodule(s) which are used throughout the tests.
-3. Run **`npm install`** in the root directory.
-4. Run **`npm install`** in the **`/tests`** directory.
-5. Run **`npm test`** to run all tests with your local changes.
-
+Found a bug? [Open an issue](https://github.com/tech-pw/platform-hyper-express/issues) with the error trace and route details.
 
 ## License
-[**MIT**](./LICENSE)
+
+MIT

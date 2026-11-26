@@ -20,3 +20,5 @@ docs/
 
 #dump.rdb
 dump.rdb
+#typescript
+*.tsbuildinfo

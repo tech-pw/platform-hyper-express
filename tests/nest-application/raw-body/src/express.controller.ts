@@ -1,5 +1,6 @@
-import { Controller, Post, RawBodyRequest, Req } from "@nestjs/common";
-import { Request } from "hyper-express";
+import { Controller, Post, Req } from "@nestjs/common";
+import type { RawBodyRequest } from "@nestjs/common";
+import type { Request } from "hyper-express";
 
 @Controller()
 export class ExpressController {

@@ -9,7 +9,6 @@ import {
   VersioningType,
   VERSION_NEUTRAL,
 } from "@nestjs/common";
-import { CustomVersioningOptions } from "@nestjs/common/interfaces";
 import { Test } from "@nestjs/testing";
 import { AppModule } from "../src/app.module";
 import { spec } from "pactum";
@@ -140,7 +139,7 @@ describe("Middleware", () => {
 
   describe("when using CUSTOM TYPE versioning", () => {
     beforeEach(async () => {
-      const extractor: CustomVersioningOptions["extractor"] = () => "1";
+      const extractor: Extract<VersioningOptions, { type: VersioningType.CUSTOM }>["extractor"] = () => "1";
 
       app = await createAppWithVersioning({
         type: VersioningType.CUSTOM,
