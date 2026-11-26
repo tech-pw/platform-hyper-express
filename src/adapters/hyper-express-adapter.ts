@@ -7,23 +7,23 @@ import {
   Logger,
   RequestMethod,
   StreamableFile,
+  VERSION_NEUTRAL,
   VersioningType,
 } from "@nestjs/common";
-import {
-  VERSION_NEUTRAL,
-  VersionValue,
-  VersioningOptions,
-} from "@nestjs/common/interfaces";
-import { CorsOptions, CorsOptionsDelegate } from "@nestjs/common/interfaces/external/cors-options.interface";
-import { NestApplicationOptions } from "@nestjs/common/interfaces/nest-application-options.interface";
+import type { NestApplicationOptions, VersioningOptions } from "@nestjs/common";
 import {
   isNil,
   isObject,
   isString,
   isUndefined,
-} from "@nestjs/common/utils/shared.utils";
-import { AbstractHttpAdapter } from "@nestjs/core/adapters/http-adapter";
-import { RouterMethodFactory } from "@nestjs/core/helpers/router-method-factory";
+} from "@nestjs/common/internal";
+import type {
+  CorsOptions,
+  CorsOptionsDelegate,
+  VersionValue,
+} from "@nestjs/common/internal";
+import { AbstractHttpAdapter } from "@nestjs/core";
+import { RouterMethodFactory } from "@nestjs/core/internal";
 import { multipartRequestBodyParser } from "./utils/get-body-parser-options.util";
 import { parse } from "content-type";
 import {
@@ -56,6 +56,19 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
     super();
 
     this.httpServer = this.instance = new Server(this.opts);
+    this.instance.use(HyperExpressAdapter.exposeNodeCompatibleRaw);
+  }
+
+  // NestJS pipes SSE/streams into `res.raw ?? res`, but hyper-express's `raw` is the
+  // native uWS object (not a stream). Point `raw` back at the hyper-express objects.
+  private static exposeNodeCompatibleRaw(
+    req: Request,
+    res: Response,
+    next: MiddlewareNext,
+  ) {
+    Object.defineProperty(req, "raw", { value: req, configurable: true });
+    Object.defineProperty(res, "raw", { value: res, configurable: true });
+    next();
   }
 
   port?: number;
@@ -129,6 +142,10 @@ export class HyperExpressAdapter extends AbstractHttpAdapter<
 
   isHeadersSent(response: Response): boolean {
     return response.headersSent;
+  }
+
+  public getHeader(response: Response, name: string) {
+    return response.getHeader(name);
   }
 
   public setHeader(response: Response, name: string, value: string) {

@@ -1,5 +1,5 @@
 import { Test } from "@nestjs/testing";
-import * as EventSource from "eventsource";
+import { EventSource } from "eventsource";
 import { AppModule } from "../src/app.module";
 import {
   HyperExpressAdapter,
@@ -28,9 +28,7 @@ describe("Sse (Express Application)", () => {
         .replace("+unix", "")
         .replace("%3A", ":");
       console.log("url: ", url);
-      eventSource = new EventSource(url + "/sse", {
-        headers: { connection: "keep-alive" },
-      });
+      eventSource = new EventSource(url + "/sse");
     });
 
     // The order of actions is very important here. When not using `forceCloseConnections`,
@@ -73,9 +71,7 @@ describe("Sse (Express Application)", () => {
         .replace("+unix", "")
         .replace("%3A", ":");
 
-      eventSource = new EventSource(url + "/sse", {
-        headers: { connection: "keep-alive" },
-      });
+      eventSource = new EventSource(url + "/sse");
     });
 
     afterEach(async () => {

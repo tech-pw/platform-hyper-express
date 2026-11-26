@@ -1,5 +1,6 @@
-import { Controller, Post, Req, RawBodyRequest } from '@nestjs/common';
-import { IncomingMessage } from 'http';
+import { Controller, Post, Req } from '@nestjs/common';
+import type { RawBodyRequest } from '@nestjs/common';
+import type { IncomingMessage } from 'http';
 
 @Controller()
 export class AppController {
